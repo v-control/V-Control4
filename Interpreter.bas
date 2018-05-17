@@ -7,6 +7,7 @@ dim sVariable, sValue, sCondition as String
 
 Seperator = chr(34)+","+chr(34)
 for iLine = StartLine to CountFields(Script,chr(13))
+	if Cancel = true then Return
 	strLine = NthField(Script,chr(13),iLine)
 	ID = NthField(strLine,chr(9),1)
 	Device = NthField(strLine,chr(9),2)
