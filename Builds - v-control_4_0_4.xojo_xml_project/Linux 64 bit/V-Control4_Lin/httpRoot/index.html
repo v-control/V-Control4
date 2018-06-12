@@ -1,0 +1,37 @@
+<link rel="stylesheet" href="css/grapes.min.css">
+<script src="grapes.min.js"></script>
+
+<div id="gjs"></div>
+
+<script type="text/javascript">
+var editor = grapesjs.init({
+    container : '#gjs',
+    height: '100%',
+
+  panels: {
+    defaults  : [{
+        id      : 'commands',
+        buttons : [{
+            id          : 'smile',
+            className   : 'fa fa-smile-o',
+            attributes  : { title: 'Smile' },
+            command     : 'helloWorld',
+        }],
+    }],
+  },
+  commands: {
+    defaults: [{
+        id: 'helloWorld',
+
+        run:  function(editor, senderBtn){
+          alert('Hello world!');
+          // Deactivate button
+          senderBtn.set('active', false);
+        },
+
+        stop:  function(editor, senderBtn){
+        },
+    }]
+  }
+});
+</script>
