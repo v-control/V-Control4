@@ -33,44 +33,47 @@ next
 dim sDevice,sCmd,sChannels,sParams as string
 
 while CuesetBlockedStatus = true
-	CheckSync
+	GetMasterPosition
 	PreviousFrame = MasterTCPosition-1
 	i = 0
 	'Find the next cue to execute
-	while i <= UBound(aTimestrip,2) and bResync = false and CuesetBlockedStatus = true
+	while i <= UBound(aTimestrip,2) and CuesetBlockedStatus = true
 		'Find the next cue
 		WaitForFrame = val(aTimestrip(0,i)) + RelativeOffset
+		showmessage(str(WaitForFrame))
 		if WaitForFrame >= MasterTCPosition then
 			ShowTimestripRow(i)
 			'Wait for the Time to execute the cue
-			while WaitForFrame >= MasterTCPosition and bResync = false and CuesetBlockedStatus = true and MasterTCPosition >= PreviousFrame
-				CheckSync
+			while WaitForFrame >= MasterTCPosition and CuesetBlockedStatus = true and MasterTCPosition >= PreviousFrame
+				DoIdle
+				GetMasterPosition
 			wend
-			if MasterTCPosition < PreviousFrame then i = UBound(aTimestrip,2)
-			'Run the Cue
-			if bResync = false and MasterTCPosition > PreviousFrame then
-				PreviousFrame = WaitForFrame
-				'Read the row
-				for x = 1 to UBound(aTimestrip)
-					sDevice = NthField(aTimestrip(x,i),chr(10),1)
-					sChannels = NthField(aTimestrip(x,i),chr(10),2)
-					sCmd = NthField(aTimestrip(x,i),chr(10),3)
-					sParams = NthField(aTimestrip(x,i),chr(10),4)
-					'Check if this is a Command
-					if sDevice <> "" and sChannels <> "" and sCmd <> "" and sParams <> "" then
-						RunTimestripCue(sDevice,sChannels,sCmd,sParams)
-					else
-						'This is a special command
-						sChannels = mid(sChannels,3,len(sChannels)-4)
-						if sDevice = "CallAsFunction" then CallAsFunction(sChannels)
-						if sDevice = "CallAsThread" then CallAsThread(sChannels)
-						if sDevice = "StopTask" then StopTask(sChannels)
-						if sDevice = "StopAllTasks" then StopAllTasks
-						if sDevice = "ShowMessage" then ShowMessage(sChannels)
-						if sDevice = "ShellExecuteAsFunction" then ShellExecuteAsFunction(sChannels)
-						if sDevice = "ShellExecuteAsThread" then ShellExecuteAsThread(sChannels)
-					end
-				next
+			//if CuesetBlockedStatus = true then Return
+			//if MasterTCPosition < PreviousFrame then i = UBound(aTimestrip,2)
+			//'Run the Cue
+			//if MasterTCPosition > PreviousFrame then
+				//PreviousFrame = WaitForFrame
+				//'Read the row
+				//for x = 1 to UBound(aTimestrip)
+					//sDevice = NthField(aTimestrip(x,i),chr(10),1)
+					//sChannels = NthField(aTimestrip(x,i),chr(10),2)
+					//sCmd = NthField(aTimestrip(x,i),chr(10),3)
+					//sParams = NthField(aTimestrip(x,i),chr(10),4)
+					//'Check if this is a Command
+					//if sDevice <> "" and sChannels <> "" and sCmd <> "" and sParams <> "" then
+						//RunTimestripCue(sDevice,sChannels,sCmd,sParams)
+					//else
+						//'This is a special command
+						//sChannels = mid(sChannels,3,len(sChannels)-4)
+						//if sDevice = "CallAsFunction" then CallAsFunction(sChannels)
+						//if sDevice = "CallAsThread" then CallAsThread(sChannels)
+						//if sDevice = "StopTask" then StopTask(sChannels)
+						//if sDevice = "StopAllTasks" then StopAllTasks
+						//if sDevice = "ShowMessage" then ShowMessage(sChannels)
+						//if sDevice = "ShellExecuteAsFunction" then ShellExecuteAsFunction(sChannels)
+						//if sDevice = "ShellExecuteAsThread" then ShellExecuteAsThread(sChannels)
+					//end
+				//next
 			end
 		end
 		i = i + 1
